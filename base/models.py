@@ -1,7 +1,5 @@
 from django.db import models
 
-import swipes
-
 # Create your models here.
 
 class User(models.Model):
@@ -18,13 +16,15 @@ class File(models.Model):
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     description = models.TextField(null=True, blank=True)
+    public = models.BooleanField(default=False)
+    category = models.CharField(max_length=200)
 
 class Project(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length = 200, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    information = models.TextField()
-
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
 
 
 class Swipe(models.Model):
@@ -34,4 +34,11 @@ class Swipe(models.Model):
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     file = models.ForeignKey(File, on_delete=models.CASCADE, null=False)
-    project = models.ManyToManyField(File, on_delete=models.DO_NOTHING, null=True)
+    project = models.ManyToManyField(Project, on_delete=models.DO_NOTHING, null=True)
+    
+class Input(models.Model):
+    link = models.URLField(max_length=200, null=True)
+    image = models.ImageField(null=True, default="avatar.svg", blank=True)
+    text = models.TextField()
+    project = models.ForeignKey(Project, on_delete=models.DO_NOTHING, null=True)
+    swipe = models.ForeignKey(Swipe, on_delete=models.CASCADE, null=True)
